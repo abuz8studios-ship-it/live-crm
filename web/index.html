@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 LIVE CRM</title>
+<link rel="stylesheet" href="/static/style.css?v=3">
+</head>
+<body>
+<div class="sidebar">
+  <div class="brand">ABUZ8<span class="live">● LIVE</span></div>
+  <nav>
+    <a href="#" data-tab="command" class="active">Command Center</a>
+    <a href="#" data-tab="projects">Projects CRM</a>
+    <a href="#" data-tab="revenue">Revenue Today</a>
+    <a href="#" data-tab="models">AI Models</a>
+    <a href="#" data-tab="programs">Programs</a>
+    <a href="#" data-tab="system">System Monitor</a>
+    <a href="#" data-tab="agents">Agents</a>
+    <a href="#" data-tab="comfy">ComfyUI Production</a>
+    <a href="#" data-tab="files">Files Catalog</a>
+    <a href="#" data-tab="context">Context Card</a>
+    <a href="#" data-tab="graveyard">Graveyard</a>
+    <a href="#" data-tab="reports">Reports</a>
+  </nav>
+  <div class="controls">
+    <button id="btnScan">Scan Now</button>
+    <button id="btnMonitor">Monitor Now</button>
+    <div class="status" id="lastScan">Scan: —</div>
+    <div class="status" id="lastMonitor">Monitor: —</div>
+  </div>
+</div>
+
+<div class="main">
+  <div id="tab-command" class="tab active">
+    <h1>Command Center</h1>
+    <div class="grid-4">
+      <div class="card" id="cc-top-action"><h2>Top Action Today</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="cc-battlefield"><h2>Active Battlefield</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="cc-blockers"><h2>Blockers</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="cc-health"><h2>System Health</h2><p class="loading">Loading…</p></div>
+    </div>
+    <div class="grid-3">
+      <div class="card" id="cc-gpu0"><h2>GPU 0</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="cc-gpu1"><h2>GPU 1</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="cc-agents"><h2>Active Agents</h2><p class="loading">Loading…</p></div>
+    </div>
+    <div class="grid-1">
+      <div class="card" id="cc-services"><h2>Running Services</h2><p class="loading">Loading…</p></div>
+    </div>
+  </div>
+
+  <div id="tab-projects" class="tab">
+    <h1>Projects CRM</h1>
+    <div class="filters">
+      <input id="projSearch" placeholder="Search projects…" />
+      <select id="projStatus"><option value="">All Status</option><option>Active</option><option>Needs Review</option><option>Complete</option><option>Paused</option><option>Graveyard</option></select>
+      <select id="projSort"><option value="today_score">Today Score</option><option value="completion_pct">Completion</option><option value="updated_at">Updated</option></select>
+    </div>
+    <div id="projectsGrid" class="grid-3"></div>
+  </div>
+
+  <div id="tab-revenue" class="tab">
+    <h1>Revenue Today</h1>
+    <div id="revenueContent" class="prose"><p class="loading">Loading…</p></div>
+  </div>
+
+  <div id="tab-models" class="tab">
+    <h1>AI Models</h1>
+    <div id="modelsGrid" class="grid-3"></div>
+  </div>
+
+  <div id="tab-programs" class="tab">
+    <h1>Programs</h1>
+    <div id="programsGrid" class="grid-3"></div>
+  </div>
+
+  <div id="tab-system" class="tab">
+    <h1>System Monitor</h1>
+    <div class="grid-2">
+      <div class="card" id="sys-cpu"><h2>CPU</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="sys-ram"><h2>RAM</h2><p class="loading">Loading…</p></div>
+    </div>
+    <div class="grid-2">
+      <div class="card" id="sys-gpu0"><h2>GPU 0</h2><p class="loading">Loading…</p></div>
+      <div class="card" id="sys-gpu1"><h2>GPU 1</h2><p class="loading">Loading…</p></div>
+    </div>
+    <div class="card" id="sys-disks"><h2>Disks</h2><p class="loading">Loading…</p></div>
+    <div class="card" id="sys-ports"><h2>Open Ports</h2><p class="loading">Loading…</p></div>
+  </div>
+
+  <div id="tab-agents" class="tab">
+    <h1>Agents</h1>
+    <div id="agentsGrid" class="grid-3"></div>
+  </div>
+
+  <div id="tab-comfy" class="tab">
+    <h1>ComfyUI Production</h1>
+    <div id="comfyGrid" class="grid-2"></div>
+  </div>
+
+  <div id="tab-files" class="tab">
+    <h1>Files Catalog</h1>
+    <div class="filters">
+      <input id="fileSearch" placeholder="Search files…" />
+      <select id="fileStatus"><option value="">All</option><option>Active</option><option>Archived</option></select>
+    </div>
+    <table id="filesTable"><thead><tr><th>File</th><th>Project</th><th>Status</th><th>Modified</th><th>Reusable</th><th>Secret</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <div id="tab-context" class="tab">
+    <h1>Context Card</h1>
+    <textarea id="contextText" readonly></textarea>
+    <div class="actions"><button id="btnCopyContext">Copy</button><button id="btnExportContext">Export MD</button></div>
+  </div>
+
+  <div id="tab-graveyard" class="tab">
+    <h1>Graveyard</h1>
+    <div id="graveyardGrid" class="grid-2"></div>
+  </div>
+
+  <div id="tab-reports" class="tab">
+    <h1>Reports</h1>
+    <ul class="report-list">
+      <li><a href="/api/revenue-today" target="_blank">Revenue Today</a></li>
+      <li><a href="/api/valuation" target="_blank">Valuation Report</a></li>
+      <li><a href="/api/export/context" target="_blank">Export Context Card</a></li>
+      <li><a href="/api/export/json" target="_blank">Export JSON</a></li>
+      <li><a href="/api/export/report" target="_blank">Export Reports ZIP</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Project Workflow Modal -->
+<div id="projectModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="workflow-header">
+      <div>
+        <h2 class="workflow-title" id="modalTitle">Project Name</h2>
+        <div class="workflow-meta" id="modalMeta"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="kpi" id="modalCompletion">0%</div>
+        <div class="sub" id="modalScore">Score: 0</div>
+      </div>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="modalProgressBar" style="width:0%"></div>
+    </div>
+
+    <div class="valuation-grid" id="modalValuations"></div>
+
+    <div class="section-title">Completion Roadmap — Steps to 100%</div>
+    <ul class="checklist" id="modalChecklist"></ul>
+
+    <div class="section-title">What This Project Needs to Make Money</div>
+    <div class="card" id="modalMonetization" style="margin-top:8px;"></div>
+
+    <div class="section-title">Assigned Resources</div>
+    <div class="card" id="modalResources" style="margin-top:8px;"></div>
+
+    <div class="actions" style="margin-top:24px;">
+      <button id="btnSaveProgress">Save Progress</button>
+      <button id="btnMarkComplete">Mark Complete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="/static/app.js?v=3"></script>
+</body>
+</html>

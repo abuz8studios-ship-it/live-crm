@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABUZ8 Mission Command Center</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0d12; --card: #111820; --border: #1e2a3a;
+  --gold: #d4a843; --lapis: #2b5ea7; --turquoise: #2dd4bf;
+  --red: #ef4444; --green: #22c55e; --yellow: #eab308;
+  --text: #e2e8f0; --muted: #94a3b8;
+}
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: linear-gradient(135deg, #0f1923 0%, #1a2744 100%); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+.header h1 { font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; }
+.header .score { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 16px; font-size: 14px; }
+.header .score span { color: var(--gold); font-weight: 700; font-size: 18px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; padding: 20px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card h2::before { content: ''; width: 8px; height: 8px; border-radius: 50%; }
+.card.revenue h2::before { background: var(--gold); }
+.card.leads h2::before { background: var(--lapis); }
+.card.outreach h2::before { background: var(--turquoise); }
+.card.agents h2::before { background: var(--green); }
+.card.content h2::before { background: var(--yellow); }
+.card.blockers h2::before { background: var(--red); }
+.metric-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.metric-row:last-child { border-bottom: none; }
+.metric-label { font-size: 13px; color: var(--muted); }
+.metric-value { font-size: 15px; font-weight: 600; }
+.metric-value.red { color: var(--red); }
+.metric-value.green { color: var(--green); }
+.metric-value.yellow { color: var(--yellow); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.active { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.status-dot.idle { background: var(--yellow); }
+.status-dot.dead { background: var(--red); }
+.agent-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.agent-row:last-child { border-bottom: none; }
+.agent-name { font-size: 14px; font-weight: 500; }
+.agent-role { font-size: 12px; color: var(--muted); }
+.pipeline { display: flex; gap: 4px; margin-top: 12px; }
+.pipeline-stage { flex: 1; text-align: center; padding: 10px 4px; border-radius: 8px; background: rgba(43,94,167,0.15); border: 1px solid var(--border); }
+.pipeline-stage .count { font-size: 20px; font-weight: 700; color: var(--turquoise); }
+.pipeline-stage .label { font-size: 10px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.action-list { list-style: none; }
+.action-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.action-list li:last-child { border-bottom: none; }
+.action-list .num { background: var(--lapis); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.wide { grid-column: 1 / -1; }
+.refresh-btn { background: var(--lapis); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.refresh-btn:hover { background: #3b6eb7; }
+.timestamp { font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>ABUZ8 MISSION COMMAND CENTER</h1>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span class="timestamp" id="ts">Updated: loading...</span>
+    <div class="score">CEO Score: <span id="ceo-score">48</span>/100</div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- REVENUE -->
+  <div class="card revenue">
+    <h2>Revenue</h2>
+    <div class="metric-row"><span class="metric-label">MRR</span><span class="metric-value red">$0 / $10,000</span></div>
+    <div class="metric-row"><span class="metric-label">Revenue (30d)</span><span class="metric-value red">$0</span></div>
+    <div class="metric-row"><span class="metric-label">Customers</span><span class="metric-value red">0</span></div>
+    <div class="metric-row"><span class="metric-label">Avg Deal Size</span><span class="metric-value red">$0</span></div>
+    <div class="metric-row"><span class="metric-label">Products Live</span><span class="metric-value green">16</span></div>
+  </div>
+
+  <!-- LEADS -->
+  <div class="card leads">
+    <h2>Lead Pipeline</h2>
+    <div class="metric-row"><span class="metric-label">Scraped</span><span class="metric-value yellow">25</span></div>
+    <div class="metric-row"><span class="metric-label">Enriched</span><span class="metric-value red">0</span></div>
+    <div class="metric-row"><span class="metric-label">Scored</span><span class="metric-value red">0</span></div>
+    <div class="metric-row"><span class="metric-label">Mockups Ready</span><span class="metric-value red">0</span></div>
+  </div>
+
+  <!-- OUTREACH -->
+  <div class="card outreach">
+    <h2>Outreach</h2>
+    <div class="metric-row"><span class="metric-label">Emails Sent</span><span class="metric-value red">0 / 50 wk</span></div>
+    <div class="metric-row"><span class="metric-label">Response Rate</span><span class="metric-value">—</span></div>
+    <div class="metric-row"><span class="metric-label">Calls Booked</span><span class="metric-value red">0</span></div>
+    <div class="metric-row"><span class="metric-label">Proposals</span><span class="metric-value red">0</span></div>
+  </div>
+
+  <!-- AGENTS -->
+  <div class="card agents">
+    <h2>Agent Fleet</h2>
+    <div class="agent-row">
+      <div><span class="status-dot active"></span><span class="agent-name">Qadir</span></div>
+      <span class="agent-role">CEO Commander · 192 tools</span>
+    </div>
+    <div class="agent-row">
+      <div><span class="status-dot active"></span><span class="agent-name">Zait</span></div>
+      <span class="agent-role">Telegram Comms</span>
+    </div>
+    <div class="agent-row">
+      <div><span class="status-dot idle"></span><span class="agent-name">Solomon</span></div>
+      <span class="agent-role">Multi-Agent OS · 64 tools</span>
+    </div>
+    <div class="agent-row">
+      <div><span class="status-dot idle"></span><span class="agent-name">Hermes</span></div>
+      <span class="agent-role">Cross-Platform Relay</span>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="card content">
+    <h2>Content</h2>
+    <div class="metric-row"><span class="metric-label">X Posts</span><span class="metric-value red">0 published</span></div>
+    <div class="metric-row"><span class="metric-label">LinkedIn</span><span class="metric-value red">0 published</span></div>
+    <div class="metric-row"><span class="metric-label">Ready Queue</span><span class="metric-value yellow">3 posts</span></div>
+    <div class="metric-row"><span class="metric-label">Target</span><span class="metric-value">2/day X · 1/day LI</span></div>
+  </div>
+
+  <!-- BLOCKERS -->
+  <div class="card blockers">
+    <h2>Blockers</h2>
+    <div class="metric-row"><span class="metric-label">vLLM Launch</span><span class="metric-value yellow">Needs Ollama stop</span></div>
+    <div class="metric-row"><span class="metric-label">Solomon 403</span><span class="metric-value green">FIXED</span></div>
+    <div class="metric-row"><span class="metric-label">First Email</span><span class="metric-value yellow">Queued</span></div>
+    <div class="metric-row"><span class="metric-label">Case Study</span><span class="metric-value red">No client yet</span></div>
+  </div>
+
+  <!-- PIPELINE FUNNEL -->
+  <div class="card wide">
+    <h2>Sales Pipeline</h2>
+    <div class="pipeline">
+      <div class="pipeline-stage"><div class="count">25</div><div class="label">Prospect</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Enriched</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Outreach</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Replied</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Call</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Proposal</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Won</div></div>
+      <div class="pipeline-stage"><div class="count">0</div><div class="label">Lost</div></div>
+    </div>
+  </div>
+
+  <!-- NEXT ACTIONS -->
+  <div class="card wide">
+    <h2>Autonomous Queue — Next Actions</h2>
+    <ol class="action-list">
+      <li><span class="num">1</span> Post Pain Story to X + LinkedIn</li>
+      <li><span class="num">2</span> Audit top 5 prospect websites</li>
+      <li><span class="num">3</span> Generate Lovable mockup for highest-scored prospect</li>
+      <li><span class="num">4</span> Draft personalized cold email (Template 1)</li>
+      <li><span class="num">5</span> Send email via Gmail SMTP</li>
+      <li><span class="num">6</span> Build /news page (AI news aggregator)</li>
+      <li><span class="num">7</span> Create Full Stack Founder Kit bundle ($149)</li>
+      <li><span class="num">8</span> Archive 21 dead Stripe products</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+document.getElementById('ts').textContent = 'Updated: ' + new Date().toLocaleString();
+</script>
+</body>
+</html>
